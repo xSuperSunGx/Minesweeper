@@ -1,6 +1,7 @@
 package net.noelli_network.fx;
 
 import com.google.gson.Gson;
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,9 +18,13 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import net.noelli_network.MainWindow;
+import net.noelli_network.Workbench;
+import net.noelli_network.utils.FlagPositions;
 import net.noelli_network.utils.Playground;
 import net.noelli_network.utils.Position;
 import net.noelli_network.field.*;
+import net.noelli_network.utils.SweaperColor;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -33,6 +38,7 @@ public class MainWindowController implements Initializable, EventHandler<MouseEv
     @FXML
     private BorderPane border;
 
+
     public static int size_x;
     public static int size_y;
     public static int bombCount;
@@ -40,42 +46,92 @@ public class MainWindowController implements Initializable, EventHandler<MouseEv
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(() -> {
-            playground = new Playground();
-            playground.init(size_x, size_y, bombCount);
-            ChangeListener<Boolean> changeb = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    SimpleBooleanProperty o = (SimpleBooleanProperty) observable;
-                    Field f = (Field) o.getBean();
-                    Button b = getButtonByPosition(f.getPosition());
-                    if(f.isFlag()) {
-                        b.setText("Flag");
-                    } else {
-                        b.setText("");
 
-                        if (f.isOpen()) {
-                            if (f instanceof EmptyField) {
-                                EmptyField em = (EmptyField) f;
-                                b.setText(em.getBombCount() + "");
-                            } else {
-                                b.setText("BOMB");
-                            }
+        init();
+    }
 
-                        } else {
-                            b.setText("");
-                        }
+    private void init() {
+        playground = new Playground();
+        playground.init(size_x, size_y, bombCount);
+        ChangeListener<Boolean> flag = new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                SimpleBooleanProperty o = (SimpleBooleanProperty) observable;
+                Field f = (Field) o.getBean();
+                Button b = getButtonByPosition(f.getPosition());
+                FlagPositions fp = null;
+                for (FlagPositions flagPosition : playground.getFlagPositions()) {
+                    if(flagPosition.getPosition().equals(f.getPosition())) {
+                        fp = flagPosition;
                     }
                 }
-            };
-            playground.getFields().forEach(fieldProperty -> {
-                fieldProperty.flagProperty().addListener(changeb);
-            });
+                String oldflag = "";
+                if(fp == null) {
+                    fp = new FlagPositions(f.getPosition(), SweaperColor.INVISIBLE, -1);
+                    oldflag = "#" + (fp.getColorcode().split("#")[1]);
+                } else{
+                    oldflag = "#" + (fp.getColorcode().split("#")[1]);
+                }
+                b.setText(newValue ? "Flag" : fp.getBombcount() <= 0 ? "" : fp.getBombcount()+"");
+                b.setStyle(newValue ? "-fx-background-color: black;-fx-text-fill: " + oldflag : "-fx-background-color: " + oldflag + ";-fx-text-fill: black");
+                int flgc = Integer.parseInt(label.getText().split(" ")[1]);
+                label.setText(newValue ? label.getText().split(" ")[0] + " " + (flgc-1) : label.getText().split(" ")[0] + " " + (flgc+1));
+            }
+        };
+        ChangeListener<Boolean> open = new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                SimpleBooleanProperty o = (SimpleBooleanProperty) observable;
+                Field f = (Field) o.getBean();
+                Button b = getButtonByPosition(f.getPosition());
+                FlagPositions fp = null;
+                if((fp = playground.getFlagPositionByPosition(f.getPosition())) != null) {
+                    playground.getFlagPositions().remove(fp);
+                }
+                if(f instanceof EmptyField) {
+                    int bombcount = ((EmptyField)f).getBombCount();
+                    b.setText(newValue ? bombcount > 0 ? bombcount + "" : "" : "");
+                    switch (bombcount) {
+                        case 0:
+                            b.setStyle(newValue ? SweaperColor.VISIBLE_0 : SweaperColor.INVISIBLE );
+                            fp = new FlagPositions(f.getPosition(), SweaperColor.VISIBLE_0, bombcount);
+                            break;
+                        case 1:
+                            b.setStyle(newValue ? SweaperColor.VISIBLE_1 : SweaperColor.INVISIBLE );
+                            fp = new FlagPositions(f.getPosition(), SweaperColor.VISIBLE_1, bombcount);
+                            break;
+                        case 2:
+                            b.setStyle(newValue ? SweaperColor.VISIBLE_2 : SweaperColor.INVISIBLE );
+                            fp = new FlagPositions(f.getPosition(), SweaperColor.VISIBLE_2, bombcount);
+                            break;
+                        case 3:
+                            b.setStyle(newValue ? SweaperColor.VISIBLE_3 : SweaperColor.INVISIBLE );
+                            fp = new FlagPositions(f.getPosition(), SweaperColor.VISIBLE_3, bombcount);
+                            break;
 
-        });
+                        default:
+                            b.setStyle(newValue ? SweaperColor.VISIBLE_OTHER : SweaperColor.INVISIBLE);
+                            fp = new FlagPositions(f.getPosition(), SweaperColor.VISIBLE_OTHER, bombcount);
+                            break;
+                    }
+                    playground.getFlagPositions().add(fp);
+                } else {
+                    b.setText(newValue ? "BOMB" : "");
+                    b.setStyle(newValue ? SweaperColor.BOMB : SweaperColor.INVISIBLE);
+                }
+            }
+        };
+        for (int y = 0; y < playground.getMatrix().length; y++) {
+            for (int x = 0; x < playground.getMatrix()[y].length; x++) {
+                playground.getMatrix()[y][x].flagProperty().addListener(flag);
+                playground.getMatrix()[y][x].openProperty().addListener(open);
+            }
+        }
+
+
 
         pane = new GridPane();
-        label = new Label("Status: ");
+        label = new Label("Flags: " + bombCount);
         for (int y = 0; y < size_y; y++) {//Spalte
             for (int x = 0; x < size_x; x++) { //Zeile
 
@@ -85,7 +141,6 @@ public class MainWindowController implements Initializable, EventHandler<MouseEv
 
         border.setCenter(pane);
         border.setBottom(label);
-        
     }
 
     private Button createButton(int x, int y) {
@@ -94,6 +149,7 @@ public class MainWindowController implements Initializable, EventHandler<MouseEv
         b.setPrefSize(50, 50);
         b.setId(gson.toJson(p));
         b.setOnMousePressed(this);
+        b.setStyle("-fx-background-color: a7a7a7;");
         return b;
     }
 
@@ -112,10 +168,18 @@ public class MainWindowController implements Initializable, EventHandler<MouseEv
 
 
     private void sendLoose() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);
         alert.setContentText("Du hast verloren!");
+
+        alert.showAndWait();
+    }
+    private void sendWinn() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText(null);
+        alert.setContentText("Du hast Gewonnen!");
 
         alert.showAndWait();
     }
@@ -131,6 +195,10 @@ public class MainWindowController implements Initializable, EventHandler<MouseEv
                 if(playground.show(p.getX(), p.getY())) {
 
                     sendLoose();
+                    init();
+                } else if(playground.finished()) {
+                    sendWinn();
+                    init();
                 }
                 playground.showField(false);
             } else if (event.isSecondaryButtonDown()) {

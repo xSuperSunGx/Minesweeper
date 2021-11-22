@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import net.noelli_network.fx.MainWindowController;
 
@@ -24,18 +25,17 @@ public class MainWindow extends Application {
     public void start(Stage primaryStage) throws IOException {
         int xmax = 40;
         int ymax = 20;
-        int bombmax = (xmax*ymax)/6;
 
 
-        askX(xmax);
-        askY(ymax);
+        int resx = askX(xmax);
+        int resy = askY(ymax);
+        int bombmax = (resx*resy)/6;
         askBomb(bombmax);
 
 
         Parent root = FXMLLoader.load(getClass().getResource("fx/mainwindow.fxml"));
 
         Scene scene = new Scene(root);
-
         primaryStage.setTitle("Minesweaper");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -47,7 +47,7 @@ public class MainWindow extends Application {
             choices.add(i+"");
         }
         do {
-            ChoiceDialog<String> dialog = new ChoiceDialog<>("15", choices);
+            ChoiceDialog<String> dialog = new ChoiceDialog<>( "" +bombmax, choices);
             dialog.setTitle("Wähle die Größe");
             dialog.setHeaderText(null);
             dialog.setContentText("Gib die Bombenanzhl an: ");
@@ -62,7 +62,7 @@ public class MainWindow extends Application {
         }while (true);
     }
 
-    private void askX(int xmax) {
+    private int askX(int xmax) {
         List<String> choices = new ArrayList<>();
         for (int i = 5; i <= xmax; i++) {
             choices.add(i+"");
@@ -76,13 +76,13 @@ public class MainWindow extends Application {
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
                 MainWindowController.size_x = Integer.parseInt(result.get());
-                break;
+                return MainWindowController.size_x;
             } else
                 continue;
 
         }while (true);
     }
-    private void askY(int ymax) {
+    private int askY(int ymax) {
         List<String> choices = new ArrayList<>();
         for (int i = 5; i <= ymax; i++) {
             choices.add(i+"");
@@ -96,11 +96,13 @@ public class MainWindow extends Application {
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
                 MainWindowController.size_y = Integer.parseInt(result.get());
-                break;
+                return MainWindowController.size_y;
             } else
                 continue;
 
         }while (true);
     }
+
+
 
 }
