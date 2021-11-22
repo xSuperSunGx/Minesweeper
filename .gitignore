@@ -2,4 +2,5 @@
 /out/
 .idea
 *.iml
-META-INF
+META-INF/
+target/
