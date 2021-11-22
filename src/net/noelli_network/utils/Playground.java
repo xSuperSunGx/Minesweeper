@@ -109,15 +109,17 @@ public class Playground {
     }
 
     public boolean finished() {
-        int sers = 0;
         for (int y = 0; y < matrix.length; y++) {
             for (int x = 0; x < matrix[y].length; x++) {
-                if(matrix[y][x].isFlag()) {
-                    sers+= isBomb(x, y);
+                if(matrix[y][x] instanceof BombField) {
+                    if(!matrix[y][x].isFlag()) {
+                        return false;
+                    }
                 }
             }
         }
-        return sers == this.bombs;
+
+        return true;
     }
 
     private int cntNeighbourBombs(int x, int y) {
