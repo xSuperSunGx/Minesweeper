@@ -1,10 +1,9 @@
 package net.noelli_network.field;
 
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import lombok.Data;
-import net.noelli_network.utils.MyBooleanProperty;
-import net.noelli_network.utils.Position;
+import net.noelli_network.utils.property.MyBooleanProperty;
+import net.noelli_network.utils.position.Position;
 
 @Data
 public abstract class Field {

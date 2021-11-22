@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import net.noelli_network.field.BombField;
 import net.noelli_network.field.EmptyField;
 import net.noelli_network.field.Field;
+import net.noelli_network.utils.position.FlagPositions;
+import net.noelli_network.utils.position.Position;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package net.noelli_network.utils;
+package net.noelli_network.utils.property;
 
 import javafx.beans.property.SimpleBooleanProperty;
 

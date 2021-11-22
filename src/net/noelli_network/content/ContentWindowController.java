@@ -1,10 +1,7 @@
-package net.noelli_network.fx;
+package net.noelli_network.content;
 
 import com.google.gson.Gson;
-import com.sun.corba.se.spi.orbutil.threadpool.Work;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -18,18 +15,16 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import net.noelli_network.MainWindow;
-import net.noelli_network.Workbench;
-import net.noelli_network.utils.FlagPositions;
+import net.noelli_network.utils.position.FlagPositions;
 import net.noelli_network.utils.Playground;
-import net.noelli_network.utils.Position;
+import net.noelli_network.utils.position.Position;
 import net.noelli_network.field.*;
 import net.noelli_network.utils.SweaperColor;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class MainWindowController implements Initializable, EventHandler<MouseEvent> {
+public class ContentWindowController implements Initializable, EventHandler<MouseEvent> {
 
     private GridPane pane;
     private Gson gson = new Gson();

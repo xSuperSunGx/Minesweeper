@@ -1,4 +1,4 @@
-package net.noelli_network.utils;
+package net.noelli_network.utils.position;
 
 import lombok.Data;
 
