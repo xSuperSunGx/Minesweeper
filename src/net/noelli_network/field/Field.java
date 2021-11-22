@@ -1,11 +1,10 @@
 package net.noelli_network.field;
 
 import javafx.beans.property.BooleanProperty;
-import lombok.Data;
 import net.noelli_network.utils.property.MyBooleanProperty;
 import net.noelli_network.utils.position.Position;
 
-@Data
+
 public abstract class Field {
 
     private final BooleanProperty flag = new MyBooleanProperty(this);
@@ -45,4 +44,5 @@ public abstract class Field {
     public Position getPosition() {
         return position;
     }
+
 }

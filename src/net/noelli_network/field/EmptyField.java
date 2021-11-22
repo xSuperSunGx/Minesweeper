@@ -1,11 +1,12 @@
 package net.noelli_network.field;
 
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.noelli_network.utils.position.Position;
-
-@Getter
 @Setter
+@Getter
 public class EmptyField extends Field{
     private int bombCount;
 
@@ -28,4 +29,5 @@ public class EmptyField extends Field{
     public String toString() {
         return super.isOpen() ? bombCount > 0 ? bombCount < 10 ? bombCount + " " : bombCount + "" : "__" : "  ";
     }
+
 }

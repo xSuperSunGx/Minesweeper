@@ -71,6 +71,11 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
                 b.setStyle(newValue ? "-fx-background-color: black;-fx-text-fill: " + oldflag : "-fx-background-color: " + oldflag + ";-fx-text-fill: black");
                 int flgc = Integer.parseInt(label.getText().split(" ")[1]);
                 label.setText(newValue ? label.getText().split(" ")[0] + " " + (flgc-1) : label.getText().split(" ")[0] + " " + (flgc+1));
+                if(playground.finished()) {
+                    sendWinn();
+                    init();
+                }
+                playground.showField(false);
             }
         };
         ChangeListener<Boolean> open = new ChangeListener<Boolean>() {
