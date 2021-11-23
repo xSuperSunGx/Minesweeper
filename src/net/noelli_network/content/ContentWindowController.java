@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -48,10 +49,9 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
     @FXML
     private StackPane stack_pane;
     private BorderPane border;
-    private AnchorPane anchor;
     private ImageView bombImage;
-    private MediaPlayer player;
-    private MediaView view;
+
+    private ParallelTransition p;
 
 
     public static int size_x;
@@ -81,16 +81,54 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
                 fade.setFromValue(1.0);
                 fade.setToValue(0.1);
                 parallelTransition.getChildren().add(fade);
-                parallelTransition.getChildren().add(initBackgroundTransition(child, 100));
+                parallelTransition.getChildren().add(initBackgroundTransition(child, 10));
             }
         }
         return parallelTransition;
+    }
+    private int x = 0;
+    private int y = 0;
+    private ParallelTransition initShakeStage(Stage stage, int millis) {
+
+        Timeline tx = new Timeline(new KeyFrame(Duration.millis(millis),
+                new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        if(x == 0) {
+                            stage.setX(stage.getX()+10);
+                            x = 1;
+                        } else {
+                            stage.setX(stage.getX()-10);
+                            x = 0;
+                        }
+                    }
+                }));
+        tx.setCycleCount(2000/millis);
+        tx.setAutoReverse(false);
+
+        Timeline ty = new Timeline(new KeyFrame(Duration.millis(millis),
+                new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        if(y == 0) {
+                            stage.setY(stage.getY()+10);
+                            y = 1;
+                        } else {
+                            stage.setY(stage.getY()-10);
+                            y = 0;
+                        }
+                    }
+                }));
+        ty.setCycleCount(2000/millis);
+        ty.setAutoReverse(false);
+        return new ParallelTransition(tx,ty);
     }
 
     private RotateTransition initRotateTransition(Node node, int sec) {
         RotateTransition image_rotate = new RotateTransition(Duration.seconds(sec), node);
         image_rotate.setFromAngle(0.0);
-        image_rotate.setToAngle(360.0 * sec);
+        image_rotate.setToAngle(360.0);
+        image_rotate.setCycleCount(Timeline.INDEFINITE);
         image_rotate.setAutoReverse(true);
         return image_rotate;
     }
@@ -204,19 +242,12 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
                     b.setStyle(newValue ? SweaperColor.BOMB : SweaperColor.INVISIBLE);
                     b.setText("");
                     fp = new FlagPositions(f.getPosition(), SweaperColor.BOMB, -1);
-                    ParallelTransition p = initOpacityTransition(pane.getChildren(), b, 3);
+                    p = initOpacityTransition(pane.getChildren(), b, 3);
                     p.getChildren().addAll(
-                            initRotateTransition(bombImage, 60),
-                            initScaleTransition(b, 10, 2));
+                            initRotateTransition(bombImage, 1),
+                            initScaleTransition(b, 10, 2),
+                            initShakeStage((Stage)b.getScene().getWindow(), 10));
                     p.playFromStart();
-                    anchor.toFront();
-                    view.setVisible(true);
-                    view.setFitHeight(100);
-                    view.setFitWidth(100);
-                    view.setLayoutX(b.getLayoutX());
-                    view.setLayoutY(b.getLayoutY());
-                    view.setOpacity(0.5);
-                    player.play();
 
                 }
                 playground.getFlagPositions().add(fp);
@@ -232,7 +263,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
             }
         }
 
-        anchor = new AnchorPane();
+
         border = new BorderPane();
         pane = new GridPane();
         label = new Label("Flags: " + bombCount);
@@ -243,24 +274,16 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
             }
         }
 
-        player = new MediaPlayer(new Media(getClass().getClassLoader().getResource("net/noelli_network/videos/expl.mp4").toExternalForm()));
-        player.setOnEndOfMedia(new Runnable() {
-            @Override
-            public void run() {
-                anchor.toBack();
-                view.setVisible(false);
-                player.stop();
-            }
-        });
-        view = new MediaView(player);
-        anchor.getChildren().add(view);
+
         border.setCenter(pane);
         border.setBottom(label);
         stack_pane.getChildren().clear();
         stack_pane.getChildren().add(border);
-        stack_pane.getChildren().add(anchor);
-        anchor.toBack();
-        view.setVisible(false);
+        if(p != null) {
+            p.stop();
+            p.getChildren().clear();
+            p = null;
+        }
     }
 
     private Button createButton(int x, int y) {
