@@ -174,8 +174,8 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);
         alert.setContentText("Du hast verloren!");
-        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("../pictures/ico24.png")));
-        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("../pictures/ico32.png")));
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("net/noelli_network/pictures/ico24.png")));
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("net/noelli_network/pictures/ico32.png")));
 
         alert.showAndWait();
     }
@@ -184,8 +184,8 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);
         alert.setContentText("Du hast Gewonnen!");
-        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("../pictures/ico24.png")));
-        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("../pictures/ico32.png")));
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("net/noelli_network/pictures/ico24.png")));
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("net/noelli_network/pictures/ico32.png")));
 
         alert.showAndWait();
     }
