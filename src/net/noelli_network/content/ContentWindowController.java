@@ -192,8 +192,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
                     b.setStyle(newValue ? SweaperColor.BOMB : SweaperColor.INVISIBLE);
                     b.setText("");
                     fp = new FlagPositions(f.getPosition(), SweaperColor.BOMB, -1);
-                    ParallelTransition p = initOpacityTransition(pane.getChildren(), b, 3
-                    );
+                    ParallelTransition p = initOpacityTransition(pane.getChildren(), b, 3);
                     p.getChildren().addAll(
                             initRotateTransition(bombImage, 60),
                             initScaleTransition(b, 10, 2));
