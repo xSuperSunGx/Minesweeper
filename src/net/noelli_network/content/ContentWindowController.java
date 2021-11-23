@@ -12,9 +12,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import net.noelli_network.utils.position.FlagPositions;
 import net.noelli_network.utils.Playground;
 import net.noelli_network.utils.position.Position;
@@ -172,6 +174,8 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);
         alert.setContentText("Du hast verloren!");
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("../pictures/ico24.png")));
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("../pictures/ico32.png")));
 
         alert.showAndWait();
     }
@@ -180,6 +184,8 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
         alert.setTitle("Information Dialog");
         alert.setHeaderText(null);
         alert.setContentText("Du hast Gewonnen!");
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("../pictures/ico24.png")));
+        ((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("../pictures/ico32.png")));
 
         alert.showAndWait();
     }

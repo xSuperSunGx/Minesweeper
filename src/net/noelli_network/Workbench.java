@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import net.noelli_network.content.ContentWindowController;
 
@@ -34,8 +35,10 @@ public class Workbench extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("content/contentwindow.fxml"));
 
-        Scene scene = new Scene(root);
         primaryStage.setTitle("Minesweaper");
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("pictures/ico24.png")));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("pictures/ico32.png")));
+        Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -50,6 +53,9 @@ public class Workbench extends Application {
             dialog.setTitle("Wähle die Größe");
             dialog.setHeaderText(null);
             dialog.setContentText("Gib die Bombenanzhl an: ");
+            ((Stage)dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("pictures/ico24.png")));
+            ((Stage)dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("pictures/ico32.png")));
+
 
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
@@ -71,6 +77,8 @@ public class Workbench extends Application {
             dialog.setTitle("Wähle die Größe");
             dialog.setHeaderText(null);
             dialog.setContentText("Gib die Länge des Spielfeldes an: ");
+            ((Stage)dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("pictures/ico24.png")));
+            ((Stage)dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("pictures/ico32.png")));
 
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
@@ -91,6 +99,8 @@ public class Workbench extends Application {
             dialog.setTitle("Wähle die Größe");
             dialog.setHeaderText(null);
             dialog.setContentText("Gib die Breite des Spielfeldes an: ");
+            ((Stage)dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("pictures/ico24.png")));
+            ((Stage)dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(getClass().getResourceAsStream("pictures/ico32.png")));
 
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
