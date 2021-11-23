@@ -9,5 +9,5 @@ public class SweaperColor {
     public static final String VISIBLE_2 = prefix + "#efef00";
     public static final String VISIBLE_3 = prefix + "#ffa500";
     public static final String VISIBLE_OTHER = prefix + "#00bfff";
-    public static final String BOMB = prefix + "#e00000";
+    public static final String BOMB = prefix + "#ff9d97";
 }

@@ -53,7 +53,10 @@ public class Playground {
 
 
     public boolean show(int x, int y) {
-        if(isBomb(x,y)==1)return true;
+        if(isBomb(x,y)==1){
+            this.opening(x, y, true);
+            return true;
+        }
         this.show(0, x, y);
         return false;
     }
@@ -71,7 +74,6 @@ public class Playground {
         if(f.isOpen()) return;
         int neigh = cntNeighbourBombs(x, y);
         this.setBombs(f, neigh);
-        this.opening(x, y, false);
         this.opening(x, y, true);
 
         if(neigh == 0) {

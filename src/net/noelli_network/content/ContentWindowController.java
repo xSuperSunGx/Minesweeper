@@ -1,6 +1,8 @@
 package net.noelli_network.content;
 
 import com.google.gson.Gson;
+import javafx.animation.*;
+import javafx.animation.Transition;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,10 +15,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import net.noelli_network.Workbench;
 import net.noelli_network.utils.position.FlagPositions;
 import net.noelli_network.utils.Playground;
@@ -35,7 +40,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
     private Playground playground;
     @FXML
     private BorderPane border;
-
+    private ImageView bombImage;
 
 
     public static int size_x;
@@ -46,7 +51,44 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Workbench.contentWindowController = this;
+        bombImage = new ImageView(new Image(getClass().getClassLoader().getResourceAsStream("net/noelli_network/pictures/ico32.png")));
         init();
+    }
+    private Timeline initBackgroundTransition(Node n, int sec) {
+        Timeline timeline = new Timeline();
+        timeline.getKeyFrames().add(new KeyFrame(Duration.millis(sec),
+                new KeyValue(n.styleProperty(), SweaperColor.INVISIBLE)));
+        return timeline;
+    }
+    private ParallelTransition initOpacityTransition(ObservableList<Node> children, Node b, int sec) {
+        ParallelTransition parallelTransition = new ParallelTransition();
+        FadeTransition fade;
+        for (Node child : children) {
+            if(!child.equals(b)) {
+                fade = new FadeTransition(Duration.seconds(sec), child);
+                fade.setFromValue(1.0);
+                fade.setToValue(0.1);
+                parallelTransition.getChildren().add(fade);
+                parallelTransition.getChildren().add(initBackgroundTransition(child, 100));
+            }
+        }
+        return parallelTransition;
+    }
+
+    private RotateTransition initRotateTransition(Node node, int sec) {
+        RotateTransition image_rotate = new RotateTransition(Duration.seconds(sec), node);
+        image_rotate.setFromAngle(0.0);
+        image_rotate.setToAngle(360.0 * sec);
+        image_rotate.setAutoReverse(true);
+        return image_rotate;
+    }
+    private ScaleTransition initScaleTransition(Node node, int sec, double multiply) {
+        ScaleTransition image_scale = new ScaleTransition(Duration.seconds(sec), node);
+        image_scale.setFromX(node.getScaleX());
+        image_scale.setToX(node.getScaleX()*multiply);
+        image_scale.setFromY(node.getScaleY());
+        image_scale.setToY(node.getScaleX()*multiply);
+        return image_scale;
     }
 
     public void init() {
@@ -73,7 +115,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
                 }
 
                 b.setStyle(f.isFlag() ? "-fx-background-color: black;-fx-text-fill: " + oldflag : "-fx-background-color: " + oldflag + ";-fx-text-fill: black");
-                if(f.isFlag()){
+                if(f.isFlag() && !(f instanceof BombField)){
                     b.setText("Flag");
                 }
 
@@ -145,12 +187,23 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
                             fp = new FlagPositions(f.getPosition(), SweaperColor.VISIBLE_OTHER, bombcount);
                             break;
                     }
-                    playground.getFlagPositions().add(fp);
                 } else {
-                    b.setText(newValue ? "BOMB" : "");
+                    b.setGraphic(bombImage);
                     b.setStyle(newValue ? SweaperColor.BOMB : SweaperColor.INVISIBLE);
+                    b.setText("");
+                    fp = new FlagPositions(f.getPosition(), SweaperColor.BOMB, -1);
+                    ParallelTransition p = initOpacityTransition(pane.getChildren(), b, 3
+                    );
+                    p.getChildren().addAll(
+                            initRotateTransition(bombImage, 60),
+                            initScaleTransition(b, 10, 2));
+                    p.playFromStart();
+
                 }
+                playground.getFlagPositions().add(fp);
             }
+
+
         };
         for (int y = 0; y < playground.getMatrix().length; y++) {
             for (int x = 0; x < playground.getMatrix()[y].length; x++) {
