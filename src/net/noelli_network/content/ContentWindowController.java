@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import net.noelli_network.Workbench;
 import net.noelli_network.utils.position.FlagPositions;
 import net.noelli_network.utils.Playground;
 import net.noelli_network.utils.position.Position;
@@ -36,6 +37,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
     private BorderPane border;
 
 
+
     public static int size_x;
     public static int size_y;
     public static int bombCount;
@@ -43,11 +45,11 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        Workbench.contentWindowController = this;
         init();
     }
 
-    private void init() {
+    public void init() {
         playground = new Playground();
         playground.init(size_x, size_y, bombCount);
         ChangeListener<Boolean> flag = new ChangeListener<Boolean>() {

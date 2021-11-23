@@ -1,13 +1,20 @@
 package net.noelli_network;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import net.noelli_network.content.ContentWindowController;
+import net.noelli_network.utils.Playground;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class Workbench extends Application {
+
+    public static ContentWindowController contentWindowController;
 
     public static void main(String[] args) {
         launch(args);
@@ -38,6 +47,24 @@ public class Workbench extends Application {
         primaryStage.setTitle("Minesweaper");
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("pictures/ico24.png")));
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("pictures/ico32.png")));
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                switch (sendMainExitMessage()) {
+                    case 0:
+                        event.consume();
+                        break;
+                    case 1:
+                        contentWindowController.init();
+                        event.consume();
+                        break;
+                    case 2:
+                        Platform.exit();
+                        break;
+
+                }
+            }
+        });
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -60,11 +87,51 @@ public class Workbench extends Application {
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
                 ContentWindowController.bombCount = Integer.parseInt(result.get());
-                break;
+                return;
             } else
                 continue;
 
-        }while (true);
+        }while (!sendExitMessage());
+        System.exit(0);
+    }
+
+    private boolean sendExitMessage() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Verlassen?");
+        alert.setHeaderText(null);
+        alert.setContentText("Möchtest du das Programm wirklich schließen?");
+        ButtonType yes = ButtonType.YES;
+        ButtonType no = ButtonType.NO;
+        alert.getButtonTypes().setAll(yes, no);
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.get() == ButtonType.YES;
+
+    }
+
+    /**
+     *
+     * @return -1 = Error; 0 = Nein; 1 = Neu; 2 = Ja
+     */
+    private int sendMainExitMessage() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Verlassen?");
+        alert.setHeaderText(null);
+        alert.setContentText("Möchtest du das Programm wirklich schließen?");
+        ButtonType yes = new ButtonType("Ja");
+        ButtonType no = new ButtonType("Nein");
+        ButtonType newl = new ButtonType("Neues Layout");
+        alert.getButtonTypes().setAll(yes, newl,no);
+        Optional<ButtonType> result = alert.showAndWait();
+        ButtonType buttonType = result.get();
+        if (yes.equals(buttonType)) {
+            return 2;
+        } else if (newl.equals(buttonType)) {
+            return 1;
+        } else if (no.equals(buttonType)) {
+            return 0;
+        }
+        System.exit(0);
+        return -1;
     }
 
     private int askX(int xmax) {
@@ -87,7 +154,9 @@ public class Workbench extends Application {
             } else
                 continue;
 
-        }while (true);
+        }while (!sendExitMessage());
+        System.exit(0);
+        return -1;
     }
     private int askY(int ymax) {
         List<String> choices = new ArrayList<>();
@@ -109,7 +178,9 @@ public class Workbench extends Application {
             } else
                 continue;
 
-        }while (true);
+        }while (!sendExitMessage());
+        System.exit(0);
+        return -1;
     }
 
 
