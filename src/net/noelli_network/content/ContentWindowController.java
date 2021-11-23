@@ -17,8 +17,13 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -29,6 +34,8 @@ import net.noelli_network.utils.position.Position;
 import net.noelli_network.field.*;
 import net.noelli_network.utils.SweaperColor;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -39,8 +46,12 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
     private Label label;
     private Playground playground;
     @FXML
+    private StackPane stack_pane;
     private BorderPane border;
+    private AnchorPane anchor;
     private ImageView bombImage;
+    private MediaPlayer player;
+    private MediaView view;
 
 
     public static int size_x;
@@ -53,6 +64,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
         Workbench.contentWindowController = this;
         bombImage = new ImageView(new Image(getClass().getClassLoader().getResourceAsStream("net/noelli_network/pictures/ico32.png")));
         init();
+
     }
     private Timeline initBackgroundTransition(Node n, int sec) {
         Timeline timeline = new Timeline();
@@ -197,6 +209,14 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
                             initRotateTransition(bombImage, 60),
                             initScaleTransition(b, 10, 2));
                     p.playFromStart();
+                    anchor.toFront();
+                    view.setVisible(true);
+                    view.setFitHeight(100);
+                    view.setFitWidth(100);
+                    view.setLayoutX(b.getLayoutX());
+                    view.setLayoutY(b.getLayoutY());
+                    view.setOpacity(0.5);
+                    player.play();
 
                 }
                 playground.getFlagPositions().add(fp);
@@ -212,8 +232,8 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
             }
         }
 
-
-
+        anchor = new AnchorPane();
+        border = new BorderPane();
         pane = new GridPane();
         label = new Label("Flags: " + bombCount);
         for (int y = 0; y < size_y; y++) {//Spalte
@@ -223,8 +243,24 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
             }
         }
 
+        player = new MediaPlayer(new Media(getClass().getClassLoader().getResource("net/noelli_network/videos/expl.mp4").toExternalForm()));
+        player.setOnEndOfMedia(new Runnable() {
+            @Override
+            public void run() {
+                anchor.toBack();
+                view.setVisible(false);
+                player.stop();
+            }
+        });
+        view = new MediaView(player);
+        anchor.getChildren().add(view);
         border.setCenter(pane);
         border.setBottom(label);
+        stack_pane.getChildren().clear();
+        stack_pane.getChildren().add(border);
+        stack_pane.getChildren().add(anchor);
+        anchor.toBack();
+        view.setVisible(false);
     }
 
     private Button createButton(int x, int y) {

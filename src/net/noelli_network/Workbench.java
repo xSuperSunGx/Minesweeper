@@ -32,6 +32,8 @@ public class Workbench extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+
+
         int xmax = 40;
         int ymax = 20;
 
