@@ -52,6 +52,33 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
     public void init() {
         playground = new Playground();
         playground.init(size_x, size_y, bombCount);
+        ChangeListener<Boolean> open_flag = new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                SimpleBooleanProperty o = (SimpleBooleanProperty) observable;
+                Field f = (Field) o.getBean();
+                Button b = getButtonByPosition(f.getPosition());
+                FlagPositions fp = null;
+                for (FlagPositions flagPosition : playground.getFlagPositions()) {
+                    if(flagPosition.getPosition().equals(f.getPosition())) {
+                        fp = flagPosition;
+                    }
+                }
+                String oldflag = "";
+                if(fp == null) {
+                    fp = new FlagPositions(f.getPosition(), SweaperColor.INVISIBLE, -1);
+                    oldflag = "#" + (fp.getColorcode().split("#")[1]);
+                } else{
+                    oldflag = "#" + (fp.getColorcode().split("#")[1]);
+                }
+
+                b.setStyle(f.isFlag() ? "-fx-background-color: black;-fx-text-fill: " + oldflag : "-fx-background-color: " + oldflag + ";-fx-text-fill: black");
+                if(f.isFlag()){
+                    b.setText("Flag");
+                }
+
+            }
+        };
         ChangeListener<Boolean> flag = new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -129,6 +156,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
             for (int x = 0; x < playground.getMatrix()[y].length; x++) {
                 playground.getMatrix()[y][x].flagProperty().addListener(flag);
                 playground.getMatrix()[y][x].openProperty().addListener(open);
+                playground.getMatrix()[y][x].openProperty().addListener(open_flag);
             }
         }
 
@@ -198,10 +226,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
             Button b = (Button) event.getSource();
             Position p = gson.fromJson(b.getId(), Position.class);
             if (event.isPrimaryButtonDown()) {
-                System.out.println(p);
-
                 if(playground.show(p.getX(), p.getY())) {
-
                     sendLoose();
                     init();
                 } else if(playground.finished()) {

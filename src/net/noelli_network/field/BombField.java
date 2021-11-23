@@ -8,6 +8,11 @@ public class BombField extends Field{
         super(position);
     }
 
+    @Override
+    public String toStringTest() {
+        return "B ";
+    }
+
 
     @Override
     public String toString() {

@@ -146,9 +146,8 @@ public class Playground {
         if(showall){
             String str = "";
             for (int i = 0; i < matrix.length; i++) {
-                for (int j = 0; j < matrix[i].length; j++) {
-                    matrix[i][j].setOpen(true);
-                    str += "|" + matrix[i][j];
+                for (int j = 0; j < matrix[i].length; j++) {;
+                    str += "|" + matrix[i][j].toStringTest();
                 }
                 str += "|\n";
             }

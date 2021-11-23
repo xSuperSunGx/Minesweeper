@@ -45,4 +45,5 @@ public abstract class Field {
         return position;
     }
 
+    public abstract String toStringTest();
 }

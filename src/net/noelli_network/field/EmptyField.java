@@ -15,6 +15,11 @@ public class EmptyField extends Field{
     }
 
     @Override
+    public String toStringTest() {
+        return bombCount > 0 ? bombCount < 10 ? bombCount + " " : bombCount + "" : "__";
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof EmptyField)) return false;
