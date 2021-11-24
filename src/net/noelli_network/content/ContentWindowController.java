@@ -144,7 +144,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
     public void init() {
         playground = new Playground();
         playground.init(size_x, size_y, bombCount);
-        ChangeListener<Boolean> open_flag = new ChangeListener<Boolean>() {
+        final ChangeListener<Boolean> open_flag = new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 SimpleBooleanProperty o = (SimpleBooleanProperty) observable;
@@ -171,7 +171,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
 
             }
         };
-        ChangeListener<Boolean> flag = new ChangeListener<Boolean>() {
+        final ChangeListener<Boolean> flag = new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 SimpleBooleanProperty o = (SimpleBooleanProperty) observable;
@@ -201,7 +201,7 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
                 playground.showField(false);
             }
         };
-        ChangeListener<Boolean> open = new ChangeListener<Boolean>() {
+        final ChangeListener<Boolean> open = new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 SimpleBooleanProperty o = (SimpleBooleanProperty) observable;
