@@ -245,8 +245,8 @@ public class ContentWindowController implements Initializable, EventHandler<Mous
                     p = initOpacityTransition(pane.getChildren(), b, 3);
                     p.getChildren().addAll(
                             initRotateTransition(bombImage, 1),
-                            initScaleTransition(b, 10, 2),
-                            initShakeStage((Stage)b.getScene().getWindow(), 10));
+                            initScaleTransition(b, 10, 2));
+                    initShakeStage((Stage)b.getScene().getWindow(), 10).playFromStart();
                     p.playFromStart();
 
                 }
